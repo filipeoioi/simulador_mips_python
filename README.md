@@ -1,2 +1,7 @@
-# simulador_mips_python
+# Simulador MIPS Python3
 É um projeto da disciplina de Arquitetura e Organização de Computadores, onde o objetivo é desenvolver um simulador MIPS. E meu objetivo é tentar desenvolver este projeto usando a linguagem Python3.
+Este projeto é dividido em **checkpoints**:
+## Checkpoint 1 
+* Abrir arquivos binários
+* Executar instruções aritméticas
+* Mostrar estado dos registradores
