@@ -6,10 +6,38 @@ Objetivos:
 - Executar as operações
 - Achar algum jeito simples de mostrar o estado dos registradores
 '''
+#---------------------Modo de funcionamento---------------------
+'''
+    Definição dos registradores:
+    regs = {'simbolo' : [simbolo do reg], 'cod' : [código do reg], 'conteudo' : [conteudo do reg]}
+    temporarios:
+        simbolo     cod
+        $t0         0001
+        $t1         0010
+        $t2         0011
+    salvos:
+        simbolo     cod
+        $s0         0111
+        $s1         1000
+        $s2         1001
+        $s3         1010
+        $s4         1011
+    ***Por definição o conteúdo de todos os registradores já vem com o valor 0000    
+
+    Operações:
+        tipo        cod
+        li          1011
+        add         0010
+        sub         0011
+'''
 #Bibliotecas
 import pickle
+from sum_sub import sum, sub
+#---------------------Funções---------------------
 
-#Funções
+#Função que trata o arquivo, convertendo o arquivo texto
+# para binario e armazenando o texto do arquivo em binario
+# novamente
 def tratamento_arquivo(arquivo_bin, arquivo_txt):
     #Lendo o arquivo texto para transforma-lo em binario para depois
     #transforma-lo em texto (temporário)
@@ -35,6 +63,7 @@ def tratamento_arquivo(arquivo_bin, arquivo_txt):
     
     return conteudo
 
+#Função que identifica e exclui os comentarios do arquivo texto
 def comentarios(linhas):
     #Desconsiderando os comentarios
     count = 0
@@ -44,8 +73,9 @@ def comentarios(linhas):
         if letra == '#':
             del(linhas[count])
         count += 1
-    print(linhas)
 
+#Função que identifica que tipo de função que é e a amazena 
+# no dicionario
 def armazena_instrucoes(linhas):
     instrucoes_li = {}
     instrucoes_arit = {}
@@ -70,9 +100,64 @@ def armazena_instrucoes(linhas):
     
     return linhas_li, linhas_arit
 
+#Identificação e execução das instruções
+def executa(linhas, regs):
+    for count in range(0, len(linhas)):
+        cont_linha = linhas[count].split(' ')
+        count = 0
+        if len(cont_linha) == 3:
+            if cont_linha[0] == '1011':
+                while True:
+                    if cont_linha[1] == regs[count]['cod']:
+                        regs[count]['conteudo'] = cont_linha[2]
+                        break
+                    else:
+                        count += 1
+        if len(cont_linha) == 4:
+            count = 0
+            while True:
+                if cont_linha[2] == regs[count]['cod']:
+                    num1 = regs[count]['conteudo']
+                if cont_linha[3] == regs[count]['cod']:
+                    num2 = regs[count]['conteudo']
+                    break
+                else:
+                    count += 1
+            if cont_linha[0] == '0010':
+                res = sum(num1, num2)
+            if cont_linha[0] == '0011':
+                res = sub(num1, num2)
+            count = 0
+            while True:
+                if cont_linha[1] == regs[count]['cod']:
+                    regs[count]['conteudo'] = res
+                    break
+                else:
+                    count += 1                    
 
-            
 
+        
+
+#Define e inicia os registradores com 0000 em conteudo
+def inicia_reg(reg, regs):
+    reg = {'simbolo' : '$t0', 'cod' : '0001', 'conteudo' : '0000'}
+    regs.append(reg)
+    reg = {'simbolo' : '$t1', 'cod' : '0010', 'conteudo' : '0000'}
+    regs.append(reg)
+    reg = {'simbolo' : '$t2', 'cod' : '0011', 'conteudo' : '0000'}
+    regs.append(reg)
+    reg = {'simbolo' : '$s0', 'cod' : '0111', 'conteudo' : '0000'}
+    regs.append(reg)
+    reg = {'simbolo' : '$s1', 'cod' : '1000', 'conteudo' : '0000'}
+    regs.append(reg)
+    reg = {'simbolo' : '$s2', 'cod' : '1001', 'conteudo' : '0000'}
+    regs.append(reg)
+    reg = {'simbolo' : '$s3', 'cod' : '1010', 'conteudo' : '0000'}
+    regs.append(reg)
+    reg = {'simbolo' : '$s4', 'cod' : '1011', 'conteudo' : '0000'}
+    regs.append(reg)
+       
+#---------------------Main---------------------
 if __name__ == '__main__':
     conteudo = tratamento_arquivo('teste.b', 'teste.txt')
 
@@ -83,9 +168,15 @@ if __name__ == '__main__':
     comentarios(linhas)
 
     linhas_li, linhas_arit = armazena_instrucoes(linhas)
-
-    print(linhas_li[0])
-    print(len(linhas_li))
-    print(len(linhas_arit))
-
+    
+    #Definindo o dicionario registradores e a lista de registradores
+    reg = {}
+    regs = []
+    inicia_reg(reg, regs)
+    executa(linhas, regs)
+    for count in range(0, len(regs)):
+        registrador = regs[count]['simbolo']
+        conteudo = regs[count]['conteudo']
+        print(f'Registrador: {registrador}  Conteudo: {conteudo}')
+    
     

@@ -1,4 +1,4 @@
-def somador_basico(num1, num2):
+def sum(num1, num2):
     num1 = num1[::-1]
     num2 = num2[::-1]
     res = []
@@ -41,13 +41,13 @@ def complemento_2(num):
         elif num[count] == '0':
             res.append('1')
     res = ''.join(res)
-    res = somador_basico(res, numero1)
+    res = sum(res, numero1)
     num = res
     return num
 
 def sub(num1, num2):
     num2 = complemento_2(num2)
-    res = somador_basico(num1, num2)
+    res = sum(num1, num2)
     return res
 
 
