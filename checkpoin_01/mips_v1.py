@@ -33,6 +33,7 @@ Objetivos:
 #Bibliotecas
 import pickle
 from sum_sub import sum, sub
+
 #---------------------Funções---------------------
 
 #Função que trata o arquivo, convertendo o arquivo texto
