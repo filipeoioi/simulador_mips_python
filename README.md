@@ -5,3 +5,6 @@ Este projeto é dividido em **checkpoints**:
 * Abrir arquivos binários
 * Executar instruções aritméticas
 * Mostrar estado dos registradores
+## Checkpoint 2
+* Executar instruções de acesso a memória lw, sw
+* Executar instruções: Desvios, transferência e lógicas
