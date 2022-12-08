@@ -1,6 +1,6 @@
 def carregarInstrucoes(arquivoEntrada, instrucoes):
     for linha in arquivoEntrada:
-        if '#' not in linha:
+        if '#' not in linha: 
             linha = linha.replace('\n', '')
             instrucoes.append([linha[y-4:y] for y in range(4, len(linha)+4,4)])
 
@@ -46,15 +46,15 @@ def somaRegistrador(a, t, s, cod, n):
 def executaInstrucaoJ(instrucao, a, t, s, pc, ra):
     if instrucao[0] == '1010':
         p = str(bin(recebeRegistro(a, t, s, instrucao[1]))).replace('b', '')
-        binario = p[1:]
 
-        binarios = list(binario)
+        binarios = list(p)
+
         for i in range(len(binarios)):
             if binarios[i] == '0':
                 binarios[i] = '1'
             else:
                 binarios[i] = '0'
-
+        
         join = ''.join(binarios)
         decimal = int(join, 2)
 
@@ -65,16 +65,18 @@ def executaInstrucaoJ(instrucao, a, t, s, pc, ra):
         pc[0] += 4
 
     if instrucao[0] == '1110':
-        instru = instrucao[2] + instrucao[3]
-        pc[0] = int(instru, 2) * 4
-        print(f'Jumpando para {int(instru, 2) * 4}')
+        ins = instrucao[2] + instrucao[3]
+        print(f"Jumpando para {int(ins, 2) * 4}")
+        pc[0] = int(ins, 2) * 4
 
     if instrucao[0] == '1111':
+        ins = instrucao[2] + instrucao[3]
+        print(f"Jumpando para {int(ins, 2) * 4}")
         ra[0] = pc[0]
-        pc[0] = int(instrucao[1], 2) * 4
-        print(f'Jumpando para {int(instru, 2) * 4}')
+        pc[0] = int(ins, 2) * 4
+        return
           
-def executaInstrucaoI(instrucao, a, t, s, pc, pilha):
+def executaInstrucaoI(instrucao, a, t, s, pc):
     if instrucao[0] == '1000':
         numeroDecimal = int(instrucao[3], 2)
         somaRegistrador(a, t, s, instrucao[2], numeroDecimal)
@@ -99,20 +101,19 @@ def executaInstrucaoI(instrucao, a, t, s, pc, pilha):
 
     if instrucao[0] == '1100':
         if recebeRegistro(a, t, s, instrucao[1]) == recebeRegistro(a, t, s, instrucao[2]):
-            pc[0] = int(instrucao[3], 2)
+            pc[0] = int(instrucao[3], 2) * 4
+            print("Comparacao sucesso")
+            return
+        print("Comparacao falhou")
+        pc[0] += 4
 
     if instrucao[0] == '1101':
         if recebeRegistro(a, t, s, instrucao[1]) < recebeRegistro(a, t, s, instrucao[2]):
-            pc[0] = int(instrucao[3], 2)
-
-    if instrucao[0] == '0001':
-        pilha.append(recebeRegistro(a, t, s, instrucao[2]))
+            pc[0] = int(instrucao[3], 2) * 4
+            print("Comparacao sucesso")
+            return
+        print("Comparacao falhou")
         pc[0] += 4
-
-    if instrucao[0] == '0000':
-        modificaRegistrador(a, t, s, instrucao[2], pilha.pop())
-        pc[0] += 4
-
 def executaInstrucaoR(instrucao, a, t, s, pc):
     aux = 0
 
@@ -154,19 +155,21 @@ def executaInstrucaoR(instrucao, a, t, s, pc):
         modificaRegistrador(a, t, s, instrucao[3], aux)        
         pc[0] += 4
 
-def separaInstrucao(a, t, s, instrucao, pc, ra, pilha):
+
+
+def separaInstrucao(a, t, s, instrucao, pc, ra):
     if instrucao[0] == '0010' or '0011' or '0100' or '0101' or '0110' or '0111' or '0000' or  '0001':
         executaInstrucaoR(instrucao, a, t, s, pc)
 
-    if instrucao[0] == '1000' or '1001' or '1100' or '1101' or '0000' or '0001':
-        executaInstrucaoI(instrucao, a, t, s, pc, pilha)
+    if instrucao[0] == '1000' or '1001' or '1100' or '1101':
+        executaInstrucaoI(instrucao, a, t, s, pc)
 
     if instrucao[0] == '1010' or '1110' or '1111':
         executaInstrucaoJ(instrucao, a, t, s, pc, ra)
 
-def imprimirRegistradores(a, t, s, pc):
+def imprimirRegistradores(a, t, s, ra):
     arquivoSaida = open("saida.txt", "w")
-    arquivoSaida.write(f't0: {t[0]}\nt1: {t[1]}\nt2: {t[2]}\na0: {a[0]}\na1: {a[1]}\na2: {a[2]}\ns0: {s[0]}\ns1: {s[1]}\ns2: {s[2]}\ns3: {s[3]}\ns4: {s[4]}\npc: {pc}')
+    arquivoSaida.write(f't0: {t[0]}\nt1: {t[1]}\nt2: {t[2]}\na0: {a[0]}\na1: {a[1]}\na2: {a[2]}\ns0: {s[0]}\ns1: {s[1]}\ns2: {s[2]}\ns3: {s[3]}\ns4: {s[4]}\n\nra: {ra[0]}')
     arquivoSaida.close()
 
 def main():
@@ -176,9 +179,8 @@ def main():
     t = [0, 0, 0]
     s = [0, 0, 0, 0, 0]
     pc = [4]
-    ra = []
+    ra = [0]
     sp = []
-    pilha = []
 
     carregarInstrucoes(arquivoEntrada, instrucoes)
     quantidadeInstrucoes = 4 * len(instrucoes)
@@ -187,10 +189,10 @@ def main():
     #print(a, t, s)
 
     while(pc[0] <= quantidadeInstrucoes):
-        print(pilha)
-        separaInstrucao(a, t, s, instrucoes[int((pc[0] / 4) - 1)], pc, ra, pilha)
+        print(f'Pc: {pc[0]}', end=' ')
+        separaInstrucao(a, t, s, instrucoes[int((pc[0] / 4) - 1)], pc, ra)
 
-    imprimirRegistradores(a, t, s, pc)
+    imprimirRegistradores(a, t, s, ra)
     arquivoEntrada.close()
 
 main()
