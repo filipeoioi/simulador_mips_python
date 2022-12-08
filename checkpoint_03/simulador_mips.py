@@ -296,7 +296,7 @@ def imprimirInstrucao_PaP(instrucao):
             
 
 def main():
-    arquivoEntrada = open("entradas2.txt", "r")
+    arquivoEntrada = open("entradas.txt", "r")
     instrucoes = []
     instrucoes_print = []
     a = [0, 0, 0]
