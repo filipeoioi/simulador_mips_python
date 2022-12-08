@@ -10,6 +10,6 @@ Este projeto é dividido em **checkpoints**:
 * Executar instruções: Desvios, transferência e lógicas
 ## Checkpoint 3
 * Interfaces mostrando execução de instruções:
-  -Direta;
-  -Passo a passo.
-*Elaboração de programa teste (fatorial!)
+  * Direta;
+  * Passo a passo.
+* Elaboração de programa teste (fatorial!)
