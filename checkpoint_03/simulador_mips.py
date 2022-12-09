@@ -169,7 +169,12 @@ def separaInstrucao(a, t, s, instrucao, pc, ra):
         executaInstrucaoJ(instrucao, a, t, s, pc, ra)
 
 
-
+#----------------------------- Funções Print -----------------------------
+# Recebe cada instrução presente no vetor de instruções, atráves de busca
+# em vetores de tuplas identifica que tipo de instrução é, e armazena o nome
+# da instrução na primeira posição de uma lista de vetores; depois disso
+# é identificado os registradores e armazenados seus nomes nas respectivas
+# posições para impressão. 
 def identificaInstrucoes(instrucao, instrucoes_print):
     tipos = [('0010', 'add'), ('0011', 'sub'), ('0100', 'and'), ('0101', 'or'), 
     ('0110', 'xor'), ('0111', 'slt'), ('0000', 'lw'), ('0001', 'sw'), ('1000', 'addi'), 
@@ -190,6 +195,10 @@ def identificaInstrucoes(instrucao, instrucoes_print):
             if instrucao[count] == reg[0]:
                 instrucao_aux.append(reg[1])
                 break
+    
+    # Identifica se o tipo da instrução é do tipo que contém numeros imediatos,
+    # se for, ela converte o ultimo itém da instrução em inteiro e armazena
+    # na ultima posição do vetor de impressão
     if instrucao[0] in tipo_j_i:
         num = str(int(instrucao[(len(instrucao) - 1)], 2))
         if num != '0':
@@ -198,105 +207,54 @@ def identificaInstrucoes(instrucao, instrucoes_print):
         
 
 
+# Imprime o estado de todos os registradores de maneira formatada
 def imprimirRegistradores(a, t, s, ra, pc):
-    print(f'''----------------------------------------------------------------------
-|{"Registradores":^68}|
-----------------------------------------------------------------------
-|$t0: {t[0]:<7}| $t1: {t[1]:<7}| $t2: {t[2]:<7}|      {"":<7}|      {"":<7}|
-|$a0: {a[0]:<7}| $a1: {a[1]:<7}| $a2: {a[2]:<7}|      {"":<7}|      {"":<7}|
-|$s0: {s[0]:<7}| $s1: {s[1]:<7}| $s2: {s[2]:<7}| $s3: {s[3]:<7}| $s4: {s[4]:<7}|
-|$ra: {ra[0]:<7}| $pc: {pc[0]:<7}|      {"":<7}|      {"":<7}|      {"":<7}|
-----------------------------------------------------------------------
+    print(f''' ----------------------------------------------------------------------
+ |{"Registradores":^68}|
+ ----------------------------------------------------------------------
+ | $t0: {t[0]:<7}| $t1: {t[1]:<7}| $t2: {t[2]:<7}|      {"":<7}|      {"":<6}|
+ | $a0: {a[0]:<7}| $a1: {a[1]:<7}| $a2: {a[2]:<7}|      {"":<7}|      {"":<6}|
+ | $s0: {s[0]:<7}| $s1: {s[1]:<7}| $s2: {s[2]:<7}| $s3: {s[3]:<7}| $s4: {s[4]:<6}|
+ | $ra: {ra[0]:<7}| $pc: {pc[0]:<7}|      {"":<7}|      {"":<7}|      {"":<6}|
+ ----------------------------------------------------------------------
     ''')
 
 
 
-def imprimirInstrucao(instrucao):
+# Identifica quantos itens tem a instrução e de acordo com
+# a quantidade ele imprime de maneira formatada
+def imprimirInstrucao(instrucao, indice):
     tam = len(instrucao)
     if tam == 4:
-        print('|', end='')
-        for count in range(0, tam):
-            string = instrucao[count]
-            n = 48 - len(string)
-            if count == 0:
-                print(f'{string:>4}', end=' ')
-            elif count == (tam - 1):
-                print(f'{string:>4}', end=' ')
-            else:
-                print(f'{string:>4},', end=' ')
-        print(f'{"|":>{n}}')
+        inst = indice + '. ' + instrucao[0] + ' ' + instrucao[1] + ', ' + instrucao[2] + ', ' + instrucao[3]
+        print(f' |  {inst:<66}|')
+    elif tam == 3:
+        inst = indice + '. ' + instrucao[0] + ' ' + instrucao[1] + ', ' + instrucao[2] 
+        print(f' |  {inst:<66}|')
+    elif tam == 2:
+        inst = indice + '. ' + instrucao[0] + ' ' + instrucao[1]
+        print(f' |  {inst:<66}|')
+
+
+
+# Mesma função de imprimir, porém imprime a instrução que
+# está sendo executada na execução passo-a-passo
+def imprimirInstrucao_PaP(instrucao, indice):
+    tam = len(instrucao)
+    if tam == 4:
+        inst = indice + '. ' + instrucao[0] + ' ' + instrucao[1] + ', ' + instrucao[2] + ', ' + instrucao[3]
+        print(f' |* {inst:<66}|')
     if tam == 3:
-        print('|', end='')
-        for count in range(0, tam):
-            string = instrucao[count]
-            n = 54 - len(string)
-            if count == 0:
-                print(f'{string:>4}', end=' ')
-            elif count == (tam - 1):
-                print(f'{string:>4}', end=' ')
-            else:
-                print(f'{string:>4},', end=' ')
-        print(f'{"|":>{n}}')
+        inst = indice + '. ' + instrucao[0] + ' ' + instrucao[1] + ', ' + instrucao[2] 
+        print(f' |* {inst:<66}|')
     if tam == 2:
-        print('|', end='')
-        for count in range(0, tam):
-            string = instrucao[count]
-            n = 62 - len(string)
-            if count == 0:
-                print(f'{string:>4}', end=' ')
-            elif count == (tam - 1):
-                print(f'{string:>4}', end=' ')
-            else:
-                print(f'{string:>4}', end=' ')
-        print(f'{"|":>{n}}')
-
-
-
-def imprimirInstrucao_PaP(instrucao):
-    tam = len(instrucao)
-    if tam == 4:
-        print('|', end='')
-        print('*', end='')
-        for count in range(0, tam):
-            string = instrucao[count]
-            n = 47 - len(string)
-            if count == 0:
-                print(f'{string:>4}', end=' ')
-            elif count == (tam - 1):
-                print(f'{string:>4}', end=' ')
-            else:
-                print(f'{string:>4},', end=' ')
-        print(f'{"|":>{n}}')
-    if tam <= 3:
-        print('|', end='')
-        print('*', end='')
-        for count in range(0, tam):
-            string = instrucao[count]
-            n = 53 - len(string)
-            if count == 0:
-                print(f'{string:>4}', end=' ')
-            elif count == (tam - 1):
-                print(f'{string:>4}', end=' ')
-            else:
-                print(f'{string:>4},', end=' ')
-        print(f'{"|":>{n}}')
-    if tam == 2:
-        print('|', end='')
-        print('*', end='')
-        for count in range(0, tam):
-            string = instrucao[count]
-            n = 66 - len(string)
-            if count == 0:
-                print(f'{string:>4}', end=' ')
-            elif count == (tam - 1):
-                print(f'{string:>4}', end=' ')
-            else:
-                print(f'{string:>4}', end=' ')
-        print(f'{"|":>{n}}')
+        inst = indice + '. ' + instrucao[0] + ' ' + instrucao[1]
+        print(f' |* {inst:<66}|')
+        
             
 
-def main():
-    arquivoEntrada = open("entradas.txt", "r")
+if __name__ == '__main__':
+    #arquivoEntrada = open("entradas.txt", "r")
     instrucoes = []
     instrucoes_print = []
     a = [0, 0, 0]
@@ -306,48 +264,72 @@ def main():
     ra = [0]
     sp = []
 
+    # Cabeçalho do programa 
+    print(f'{"-"*100}\n{"|"}{"SIMULADOR MIPS":^98}|\n{"-"*100}')
+
+    # Entrada do nome do arquivo
+    while True:
+        try:
+            print(f'\n {"Arquivo" :-^58}')
+            arquivo = str(input(' Insira o nome do arquivo de entrada: ')) + '.txt'
+            arquivoEntrada = open(arquivo, 'r') 
+        except FileNotFoundError:
+            print(' Erro!! Arquivo de entrada inexistente no diretorio do programa!')
+            print(f' {"-" * 58}')
+        else:
+            print(f' {"-" * 58}')
+            break
+                
     carregarInstrucoes(arquivoEntrada, instrucoes)
     quantidadeInstrucoes = 4 * len(instrucoes)
+    
+    # Percorre cada instrução, idetifica cada uma delas e armazena em uma lista de impressão
     for instrucao in instrucoes:
         identificaInstrucoes(instrucao, instrucoes_print)
     
-
-    print(f'{"-"*100}\n{"|"}{"SIMULADOR MIPS":^98}|\n{"-"*100}')
+    # Perguntando para o usuario que tipo de execução do código ele quer que aconteça:
+    escolha = str(input('\n ---------------Opções de execução do código---------------\n 1. Passo-a-Passo\n 2. Direta\n\n Escolha uma opção de execução: '))
     
-
-    escolha = str(input('1. Passo-a-Passo\n2. Direta\nEscolha uma opção de execução: '))
-        
+    # Verifica se a opção que o usuario informou é válida
     while escolha != '1' and escolha != '2':
-        escolha = str(input('Erro! Opção inválida!!\nDigite novamente: '))
-        
+        escolha = str(input(' Erro! Opção inválida!!\nDigite novamente: '))   
     print('\n')
 
+    # Execução Passo-a-Passo
     if escolha == '1':
+        # Contador que indica o passo que a execução está
         count = 0
         while pc[0] <= quantidadeInstrucoes:
-            #Titulo
             passo = 'Passo: ' + str(count)
-            print(f'{"-"*70}\n|{passo:^68}|\n{"-"*70}')
-            print(f'|{"Instruções":^68}|\n{"-"*70}')
+            print(f' {"-"*70}\n |{passo:^68}|\n {"-"*70}')
+            print(f' |{"Instruções":^68}|\n {"-"*70}')
 
+            #Indice para auxiliar na numeração das linhas do código
+            indice = 1
             for count_aux in range(0, len(instrucoes_print)):
+                # Verifica se a instrução a ser impressa é a instrução em execução
                 if count_aux == ((pc[0] / 4) - 1):
-                    imprimirInstrucao_PaP(instrucoes_print[count_aux])
+                    imprimirInstrucao_PaP(instrucoes_print[count_aux], str(indice))
                 else:
-                    imprimirInstrucao(instrucoes_print[count_aux])
+                    imprimirInstrucao(instrucoes_print[count_aux], str(indice))
+                indice += 1
+            
+            # Imprime o estado dos registradores e avança para a proxima instrução
             imprimirRegistradores(a, t, s, ra, pc) 
             separaInstrucao(a, t, s, instrucoes[int((pc[0] / 4) - 1)], pc, ra)
             count += 1
-            wait('ctrl')
+            input(" Pressione Enter para continuar...")
         exit()
-        
+    
+    # Execução Direta
     if escolha == '2':
-            
-        print(f'{"-"*70}\n|{"Instruções":^68}|\n{"-"*70}')
-            
-        for instrucao in instrucoes_print:
-            imprimirInstrucao(instrucao)
-            
+        print(f' {"-"*70}\n |{"Instruções":^68}|\n {"-"*70}')
+        
+        # Percorre todas a instruções e imprime elas
+        for indice, instrucao in enumerate(instrucoes_print):
+            imprimirInstrucao(instrucao, str(indice + 1))
+        
+        # Executa todas as instruções e imprime os registradores
         while pc[0] <= quantidadeInstrucoes:
             separaInstrucao(a, t, s, instrucoes[int((pc[0] / 4) - 1)], pc, ra)    
         imprimirRegistradores(a, t, s, ra, pc)
@@ -355,5 +337,3 @@ def main():
     
     
     arquivoEntrada.close()
-
-main()
