@@ -8,3 +8,8 @@ Este projeto é dividido em **checkpoints**:
 ## Checkpoint 2
 * Executar instruções de acesso a memória lw, sw
 * Executar instruções: Desvios, transferência e lógicas
+## Checkpoint 3
+* Interfaces mostrando execução de instruções:
+  * Direta;
+  * Passo a passo.
+* Elaboração de programa teste (fatorial!)
