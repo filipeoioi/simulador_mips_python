@@ -1,4 +1,3 @@
-from keyboard import wait
 def carregarInstrucoes(arquivoEntrada, instrucoes):
     for linha in arquivoEntrada:
         if '#' not in linha: 
