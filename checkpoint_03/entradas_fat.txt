@@ -1,21 +1,23 @@
 #main:
 #addi $a0, $a0, 5
-1000010001000101
+1000000001000101
 #addi $t2, $t2, 0
-1000001100110000
+1000000000110000
 #add $s2, $t2, $a0
 0010100100110100
-#fat:	
+#fat 4:	
 #beq $a0, $t2, sair
+1100010000111101
 #add $s0, $t2, $s2
+0010011100111001
 #addi $a0, $a0, -1
 #add $t0, $t0, $a0
-#li $s2, 0 
-#while:
+#addi $s2, $s2, 0 
+#while 9:
 #beq $t0, $t2, fat
 #add $s2, $s2, $s0
 #addi $t0, $t0, -1 
 #j while
-#sair:	
+#sair 13:	
 #move $a0, $s0
 #add $a0, $t2, $s0
